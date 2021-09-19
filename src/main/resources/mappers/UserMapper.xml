@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="top.mylady.mappers.UserMapper">
+    
+    <!--用户映射-->
+    <resultMap id="UserResultMap" type="top.mylady.pojo.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+    </resultMap>
+    
+    <!--订单映射-->
+    <resultMap id="Order_ResultMap" type="top.mylady.pojo.Order">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="order_id" property="order_id"/>
+        
+        <association property="user" javaType="top.mylady.pojo.User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+        </association>
+    </resultMap>
+    
+    <!--用户[订单] 映射-->
+    <resultMap id="User_Order_ResultMap" type="top.mylady.pojo.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        
+        <collection property="orders" ofType="top.mylady.pojo.Order">
+            <id column="id" property="id"/>
+            <result column="create_time" property="createTime"/>
+            <result column="order_id" property="order_id"/>
+        </collection>
+    </resultMap>
+    
+    
+    
+    <!-- [1]一对多查询; 要求: 查询用户下的, 全部订单
+    -->
+    <select id="f_Order_leftJoin_User" resultMap="User_Order_ResultMap">
+        select * from tb_user as u left join tb_order as o on u.id = o.user_id;
+    </select>
+    
+    <!-- [2]一对一查询; 要求: 查询 订单-用户
+    -->
+    <select id="findAllOrder" resultMap="Order_ResultMap">
+        select * from tb_order as o, tb_user as u where u.id = o.user_id;
+    </select>
+    
+    
+    
+    <!--多对多 查询 -->
+    <resultMap id="User_RuleResultMap" type="top.mylady.pojo.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+    </resultMap>
+
+<!--    <select id="xxx" resultType="User_RuleResultMap">-->
+<!--        select u.*, r.* ,r.id rid from tb_user u-->
+<!--            left join-->
+<!--                user_role ur on u.id = ur.user_id-->
+<!--            inner join-->
+<!--                role r on ur.role_id=r.id-->
+<!--    </select>-->
+
+</mapper>
